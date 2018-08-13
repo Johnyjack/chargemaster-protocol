@@ -11,30 +11,28 @@ from termcolor import colored
 
 def transaction_5a(result):
 
-    print '\nReceived data:'
-
-    if binascii.b2a_hex(result[0]) != '0f':
+    if binascii.b2a_hex(result[0:1]) != '0f':
         print colored('Header not correct! Aborting decoding. Received: ' + binascii.b2a_hex(result[0]), 'red')
         return
 
-    packetlength = struct.unpack('B', result[1])[0]
+    packetlength = struct.unpack('B', result[1:2])[0]
     if packetlength != 37:
         print colored('Unexpected packet length! Aborting decoding. Received: ' + binascii.b2a_hex(result[1]), 'red')
         return
 
-    if binascii.b2a_hex(result[2]) != '5a':
+    if binascii.b2a_hex(result[2:3]) != '5a':
         print colored('Wrong transaction type! Aborting decoding. Received: ' + binascii.b2a_hex(result[2]), 'red')
         return
 
-    unknown1 = binascii.b2a_hex(result[3])
+    unknown1 = binascii.b2a_hex(result[3:4])
     print 'Unknown field Nr. 1:', unknown1
     if unknown1 != '00':
         print colored('!!! Values changed !!! previous: 00', 'red')
 
-    resttime = struct.unpack('B', result[4])[0]
+    resttime = struct.unpack('B', result[4:5])[0]
     print 'Resttime:', resttime, 'minutes'
 
-    temp = struct.unpack('B', result[5])[0]
+    temp = struct.unpack('B', result[5:6])[0]
     if temp == 1:
         saftytimerenable = True
     else:
@@ -43,7 +41,7 @@ def transaction_5a(result):
     saftytimertimeout = struct.unpack('>H', result[6:8])[0]
     print 'Safty Timer Timeout:', saftytimertimeout, 'minutes'
 
-    temp = struct.unpack('B', result[8])[0]
+    temp = struct.unpack('B', result[8:9])[0]
     if temp == 1:
         capacitycutoutenable = True
     else:
@@ -52,14 +50,14 @@ def transaction_5a(result):
     capacitycutoutvalue = struct.unpack('>H', result[9:11])[0]
     print 'Capacity Cutout Value:', capacitycutoutvalue, 'mAh'
 
-    temp = struct.unpack('B', result[11])[0]
+    temp = struct.unpack('B', result[11:12])[0]
     if temp == 1:
         keybeepenable = True
     else:
         keybeepenable = False
     print 'Keybeep Enable:', keybeepenable
 
-    temp = struct.unpack('B', result[12])[0]
+    temp = struct.unpack('B', result[12:13])[0]
     if temp == 1:
         buzzerenabled = True
     else:
@@ -69,10 +67,14 @@ def transaction_5a(result):
     inputcutoff = float(struct.unpack('>H', result[13:15])[0])/1000
     print 'Input Cutoff Voltage:', inputcutoff, 'V'
 
-    unknown2 = binascii.b2a_hex(result[15:17])
+    unknown2 = binascii.b2a_hex(result[15:18])
     print 'Unknown field Nr. 2:', unknown2
     if unknown2 != '0000':
         print colored('!!! Values changed !!! previous: 0000', 'red')
+
+    #jacks edits
+    current = float(struct.unpack('>H', result[16:18])[0])/1000
+    print 'Current: ', current, 'A'
 
     protectiontemp = struct.unpack('B', result[17:18])[0]
     print 'Protection Temperature:', protectiontemp, 'degrees'
@@ -110,5 +112,5 @@ def transaction_5a(result):
         print colored('Stop sign not correct! Aborting decoding. Received: ' + binascii.b2a_hex(result[39:41]), 'red')
         return
 
-    print '\nData received:'
+    #print '\nData received:'
     print binascii.b2a_hex(result)

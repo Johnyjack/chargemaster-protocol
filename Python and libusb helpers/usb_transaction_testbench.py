@@ -65,10 +65,6 @@ else:
 
     transaction_5a(result)
 
-    print '\nData received:'
-    print binascii.b2a_hex(result)
-
-
     handle.releaseInterface(INTERFACE)
     print 'interface released'
     # handle.attachKernelDriver(INTERFACE)
