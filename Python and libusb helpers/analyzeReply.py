@@ -30,18 +30,44 @@ def get_response(command_str, handle):
  #       print 'There was an error.'
 
 def transaction_55(result):
+    header_byte = binascii.b2a_hex(result[0:1])
+    packet_lenth = binascii.b2a_hex(result[1:2])
+    transaction_type = binascii.b2a_hex(result[2:3])
+    is_running = int(binascii.b2a_hex(result[4:5]), 16) #2 = standbye, 1 = charging
 
-    if binascii.b2a_hex(result[0:2]) != '0f':
-        print colored('Header not correct! Aborting decoding. Received: ' + binascii.b2a_hex(result[0]), 'red')
+    charged_capacity = int(binascii.b2a_hex(result[5:7]), 16) #mAh
+    print 'charged_capacity: ', charged_capacity
+    unknown1 = binascii.b2a_hex(result[7:14])
+    print 'unknown1: ', unknown1
+
+    internal_temp = int(binascii.b2a_hex(result[14:15]), 16)
+
+
+    cell1_voltage = int(binascii.b2a_hex(result[17:19]), 16)
+    cell2_voltage = int(binascii.b2a_hex(result[19:21]), 16)
+    cell3_voltage = int(binascii.b2a_hex(result[21:23]), 16)
+    cell4_voltage = int(binascii.b2a_hex(result[23:25]), 16)
+    cell5_voltage = int(binascii.b2a_hex(result[25:27]), 16)
+    cell6_voltage = int(binascii.b2a_hex(result[27:29]), 16)
+
+    unknown2 = binascii.b2a_hex(result[29:32])
+    print 'unknown2: ', unknown2
+
+
+
+    #print cell1_voltage, cell2_voltage, cell3_voltage, cell4_voltage, cell5_voltage, cell6_voltage
+
+    #print internal_temp
+    if header_byte != '0f':
+        print colored('Header not correct! Aborting decoding. Received: ' + header_byte, 'red')
         return
 
-    packetlength = struct.unpack('B', result[1:2])[0]
-    if packetlength != 22:
-        print colored('Unexpected packet length! Aborting decoding. Received: ' + binascii.b2a_hex(result[1]), 'red')
+    if packet_lenth != '22':
+        print colored('Unexpected packet length! Aborting decoding. Received: ' + packet_lenth, 'red')
         return
 
-    if binascii.b2a_hex(result[2:3]) != '55':
-        print colored('Wrong transaction type! Aborting decoding. Received: ' + binascii.b2a_hex(result[2]), 'red')
+    if transaction_type != '55':
+        print colored('Wrong transaction type! Aborting decoding. Received: ' + transaction_type, 'red')
         return
 
     unknown1 = binascii.b2a_hex(result[3:4])
@@ -49,11 +75,12 @@ def transaction_55(result):
     if unknown1 != '00':
         print colored('!!! Values changed !!! previous: 00', 'red')
 
-    # celltype = struct.unpack('B', result[4:5])[0]
-    #     if celltype==00:
-    #         celltype_str = 'LiPo'
-    #     if celltype==
-    # print 'celltype:', celltype
+    cell_type = binascii.b2a_hex(result[4:5])
+    #cell_type = struct.unpack('B', result[4:5])[0]
+    if cell_type=='00':
+        cell_type_str = 'LiPo'
+        #if celltype==
+    print 'celltype:', cell_type
 
 
     # temp = struct.unpack('B', result[5:6])[0]
