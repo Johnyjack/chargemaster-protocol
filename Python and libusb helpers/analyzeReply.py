@@ -35,8 +35,13 @@ def transaction_55(result): #still need to find current
 
     charged_capacity = int(binascii.b2a_hex(result[5:7]), 16) #mAh
     print 'charged_capacity: ', charged_capacity
-    unknown1 = binascii.b2a_hex(result[7:14])
-    print 'unknown1: ', unknown1
+
+    print 'unknown1: ', binascii.b2a_hex(result[7:11])
+
+    current = int(binascii.b2a_hex(result[11:13]), 16) #mA
+    print 'current: ', current
+
+    print 'unknown2: ', binascii.b2a_hex(result[13:14]) #mA
 
     internal_temp = int(binascii.b2a_hex(result[14:15]), 16) #in C
 
