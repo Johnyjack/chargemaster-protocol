@@ -25,7 +25,6 @@ def get_response(command_str, handle):
     response = handle.interruptRead(1, 64)
     return response
 
-
 def transaction_55(result): #still need to find current
     header_byte = binascii.b2a_hex(result[0:1])
     packet_lenth = binascii.b2a_hex(result[1:2])
