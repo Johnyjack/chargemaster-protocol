@@ -8,6 +8,65 @@ import binascii
 import struct
 from termcolor import colored
 
+def get_response(command_str, handle):
+    timeoutms = 100
+    if command_str=='5a':
+        command = binascii.unhexlify('0f035a005affff0000000000000000000000000000000000000000000000000000000000000000000000000'
+                              '00000000000000000000000000000000000000000')
+    #if command_str=='5f':
+    #if command_str=='05':
+    if command_str=='55':
+        command = binascii.unhexlify('0f03550055ffff0000000000000000000000000000000000000000000000000000000000000000000000000'
+                              '00000000000000000000000000000000000000000')
+    #if command_str=='57':
+    #if command_str=='fe':
+    sent = handle.interruptWrite(1, command, timeoutms)
+    print 'Nr. bytes sent:', sent
+    response = handle.interruptRead(1, 64)
+    return response
+
+def transaction_55(result): #still need to find current
+    header_byte = binascii.b2a_hex(result[0:1])
+    packet_lenth = binascii.b2a_hex(result[1:2])
+    transaction_type = binascii.b2a_hex(result[2:3])
+    unknown1 = binascii.b2a_hex(result[3:4])
+    is_running = int(binascii.b2a_hex(result[4:5]), 16) #2 = standbye, 1 = charging
+    capacity_change = int(binascii.b2a_hex(result[5:7]), 16) #mAh
+    run_time = int(binascii.b2a_hex(result[7:9]), 16) #seconds
+    batt_voltage = int(binascii.b2a_hex(result[9:11]), 16) #in mV
+    batt_current = int(binascii.b2a_hex(result[11:13]), 16) #mA
+
+    print 'unknown1: ', binascii.b2a_hex(result[13:14])
+
+    internal_temp = int(binascii.b2a_hex(result[14:15]), 16) #in C
+    cell1_voltage = int(binascii.b2a_hex(result[17:19]), 16) #in mV
+    cell2_voltage = int(binascii.b2a_hex(result[19:21]), 16) #in mV
+    cell3_voltage = int(binascii.b2a_hex(result[21:23]), 16) #in mV
+    cell4_voltage = int(binascii.b2a_hex(result[23:25]), 16) #in mV
+    cell5_voltage = int(binascii.b2a_hex(result[25:27]), 16) #in mV
+    cell6_voltage = int(binascii.b2a_hex(result[27:29]), 16) #in mV
+    
+    print 'unknown2: ', binascii.b2a_hex(result[29:])
+
+    if header_byte != '0f':
+        print colored('Header not correct! Aborting decoding. Received: ' + header_byte, 'red')
+        return
+
+    if packet_lenth != '22':
+        print colored('Unexpected packet length! Aborting decoding. Received: ' + packet_lenth, 'red')
+        return
+
+    if transaction_type != '55':
+        print colored('Wrong transaction type! Aborting decoding. Received: ' + transaction_type, 'red')
+        return
+
+    if unknown1 != '00':
+        print colored('!!! Values changed !!! previous: 00', 'red')
+
+
+    if binascii.b2a_hex(result[36:38]) != 'ffff':
+        print colored('Stop sign not correct! Aborting decoding. Received: ' + binascii.b2a_hex(result[39:41]), 'red')
+        return
 
 def transaction_5a(result):
 
