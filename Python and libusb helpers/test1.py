@@ -1,6 +1,7 @@
 import usb1
 import binascii
 from analyzeReply import *
+from battery_class import battery_class
 
 
 VENDOR_ID = 0000
@@ -40,10 +41,30 @@ else:
         print('kernel inactive')
 
     handle.claimInterface(INTERFACE)
-
     print 'interface claimed'
 
-command = '55'
-result = get_response(command, handle)
-print 'response: ', binascii.b2a_hex(result)
-transaction_55(result)
+#----debugging----#
+# command = '55'
+# result = get_response(command, handle)
+# print 'response: ', binascii.b2a_hex(result)
+# transaction_55(result)
+
+#A test should run as follows...
+#setup action (charge or discharge) manually
+#start script
+#start the action manually
+#the script will then log the data in csv format to a file based on the date and stop logging when the action ends
+
+#things necessary in the battery class:
+#check if action is_running: --> from trans55
+#if yes, pull voltage data and current data
+graphene_4s = battery_class('lipo', 4, 4400) #unsure if capcity is correct
+graphene_4s.is_logging = True
+while (graphene_4s.start_logging)
+    if graphene_4s.get_data()
+        graphene_4s.log_data()
+    if graphene_4s.is_running_action == False
+        graphene_4s.is_logging == False
+graphene_4s.get_data()
+graphene_4s.log_data()
+

@@ -31,35 +31,21 @@ def transaction_55(result): #still need to find current
     transaction_type = binascii.b2a_hex(result[2:3])
     unknown1 = binascii.b2a_hex(result[3:4])
     is_running = int(binascii.b2a_hex(result[4:5]), 16) #2 = standbye, 1 = charging
-
     capacity_change = int(binascii.b2a_hex(result[5:7]), 16) #mAh
-    print 'capacity_change: ', capacity_change
-
     run_time = int(binascii.b2a_hex(result[7:9]), 16) #seconds
-    print 'run_time: ', run_time
-
     batt_voltage = int(binascii.b2a_hex(result[9:11]), 16) #in mV
-    print 'batt_voltage: ', batt_voltage
-
-    current = int(binascii.b2a_hex(result[11:13]), 16) #mA
-    print 'current: ', current
+    batt_current = int(binascii.b2a_hex(result[11:13]), 16) #mA
 
     print 'unknown1: ', binascii.b2a_hex(result[13:14])
 
     internal_temp = int(binascii.b2a_hex(result[14:15]), 16) #in C
-
-
     cell1_voltage = int(binascii.b2a_hex(result[17:19]), 16) #in mV
     cell2_voltage = int(binascii.b2a_hex(result[19:21]), 16) #in mV
     cell3_voltage = int(binascii.b2a_hex(result[21:23]), 16) #in mV
     cell4_voltage = int(binascii.b2a_hex(result[23:25]), 16) #in mV
     cell5_voltage = int(binascii.b2a_hex(result[25:27]), 16) #in mV
     cell6_voltage = int(binascii.b2a_hex(result[27:29]), 16) #in mV
-    print cell1_voltage
-    print cell2_voltage
-    print cell3_voltage
-    print cell4_voltage
-
+    
     print 'unknown2: ', binascii.b2a_hex(result[29:])
 
     if header_byte != '0f':
