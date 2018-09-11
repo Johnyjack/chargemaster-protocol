@@ -21,7 +21,7 @@ def get_response(command_str, handle):
     #if command_str=='57':
     #if command_str=='fe':
     sent = handle.interruptWrite(1, command, timeoutms)
-    print 'Nr. bytes sent:', sent
+    #print 'Nr. bytes sent:', sent
     response = handle.interruptRead(1, 64)
     return response
 

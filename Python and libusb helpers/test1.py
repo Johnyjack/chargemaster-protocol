@@ -1,7 +1,8 @@
 import usb1
 import binascii
-from analyzeReply import *
-from battery_class import battery_class
+import sys
+#from analyzeReply import *
+from battery_class import *
 
 
 VENDOR_ID = 0000
@@ -29,23 +30,23 @@ if len(deviceList) < 1:
     print 'error: no device found'
 else:
     device = deviceList[0]
-    handle = device.open()
+    usb_handle = device.open()
 
-    if handle.kernelDriverActive(INTERFACE):
+    if usb_handle.kernelDriverActive(INTERFACE):
         print('kernel active')
-        handle.detachKernelDriver(INTERFACE)
+        usb_handle.detachKernelDriver(INTERFACE)
         print('kernel detached')
-        if handle.kernelDriverActive(INTERFACE):
+        if usb_handle.kernelDriverActive(INTERFACE):
             print('error detaching kernel')
     else:
         print('kernel inactive')
 
-    handle.claimInterface(INTERFACE)
+    usb_handle.claimInterface(INTERFACE)
     print 'interface claimed'
 
 #----debugging----#
 # command = '55'
-# result = get_response(command, handle)
+# result = get_response(command, usb_handle)
 # print 'response: ', binascii.b2a_hex(result)
 # transaction_55(result)
 
@@ -58,13 +59,16 @@ else:
 #things necessary in the battery class:
 #check if action is_running: --> from trans55
 #if yes, pull voltage data and current data
-graphene_4s = battery_class('lipo', 4, 4400) #unsure if capcity is correct
+#battery class init (battery_chem, series_cells, batt_capacity, usb_device_handle, log_filename)
+graphene_4s = BatteryClass('lipo', 4, 1000, usb_handle, 'test_data1')
 graphene_4s.is_logging = True
-while (graphene_4s.start_logging)
-    if graphene_4s.get_data()
-        graphene_4s.log_data()
-    if graphene_4s.is_running_action == False
-        graphene_4s.is_logging == False
+graphene_4s.get_data()
+graphene_4s.log_data_header()
+
+while (graphene_4s.action_state == 1):
+    graphene_4s.get_data()
+    graphene_4s.log_data()
+    time.sleep(1)
 graphene_4s.get_data()
 graphene_4s.log_data()
 
